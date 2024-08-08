@@ -1,9 +1,12 @@
 package ui;
 
+import entities.Client;
 import entities.HotelRoom;
 import entities.Reservation;
+import exception.ClientNotFoundException;
 import exception.HotelRoomNotFoundException;
 import exception.ReservationNotFoundException;
+import service.ClientService;
 import service.HotelRoomService;
 import service.ReservationService;
 import utils.DateFormat;
@@ -11,17 +14,20 @@ import utils.DateFormat;
 import java.time.LocalDate;
 import java.util.Scanner;
 
-public class Menu {
+public class ReservationMenu {
 
-    ReservationService reservationService;
-    HotelRoomService hotelRoomService;
-     Scanner scanner;
+    private final ClientService clientService;
+    private final HotelRoomService hotelRoomService;
+    private final ReservationService reservationService;
+    private final Scanner scanner;
 
-    public Menu() {
-        this.reservationService = new ReservationService();
-        this.hotelRoomService = new HotelRoomService();
+    public ReservationMenu(ClientService clientService, HotelRoomService hotelRoomService, ReservationService reservationService) {
+        this.clientService = clientService;
+        this.hotelRoomService = hotelRoomService;
+        this.reservationService = reservationService;
         this.scanner = new Scanner(System.in);
     }
+
 
     public void showMenu() {
         while (true) {
@@ -35,8 +41,9 @@ public class Menu {
             System.out.println("3. Show Reservation By Id");
             System.out.println("4. Delete Reservation By Id");
             System.out.println("5. Update Reservation By Id");
-            System.out.println("6. Create New Room");
-            System.out.println("7. Exit");
+            System.out.println("6. Show Rooms");
+            System.out.println("7. Show Clients");
+            System.out.println("8. Exit");
             System.out.println("===============================");
 
             int choice = scanner.nextInt();
@@ -57,10 +64,14 @@ public class Menu {
                 case 5:
                     editReservation();
                     break;
+
                 case 6:
-                    createRoom();
+                    HotelRoomMenu();
                     break;
                 case 7:
+                    clientMenu();
+                    break;
+                case 8:
                     return;
                 default:
                     System.out.println("Invalid choice");
@@ -68,28 +79,29 @@ public class Menu {
         }
     }
 
-
-    public void createRoom(){
-        System.out.println("Please enter a new room:");
-        String roomName = scanner.nextLine();
-        HotelRoom hotelRoom = new HotelRoom(0, roomName);
-        hotelRoom = hotelRoomService.save(hotelRoom);
-        System.out.println("Room created successfully with ID: " + hotelRoom.getId());
+    public void HotelRoomMenu() {
+        RoomMenu roomMenu = new RoomMenu(clientService,hotelRoomService,reservationService,scanner);
+        roomMenu.HotelRoomMenu();
     }
 
-    public void createReservation(){
-        System.out.println("Available Hotel Rooms:");
-        hotelRoomService.findAll().forEach(room -> System.out.println("ID: " + room.getId() + ", Name: " + room.getRoomName()));
+
+    public void createReservation() {
 
         System.out.println("Enter Hotel Room ID to reserve:");
         int roomId = scanner.nextInt();
         scanner.nextLine();
 
-        HotelRoom hotelRoom;
 
+        System.out.println("Enter Client ID to reserve:");
+        int clientId = scanner.nextInt();
+        scanner.nextLine();
+
+        HotelRoom hotelRoom;
+        Client client;
         try {
             hotelRoom = hotelRoomService.findById(roomId);
-        } catch (HotelRoomNotFoundException e) {
+            client = clientService.findById(clientId);
+        } catch (HotelRoomNotFoundException | ClientNotFoundException e) {
             System.out.println(e.getMessage());
             return;
         }
@@ -105,65 +117,58 @@ public class Menu {
 
         if (startDate.isBefore(DateNow)) {
             System.out.println("Start date cannot be in the past.");
+            return;
         }
 
         if (endDate.isBefore(startDate)) {
             System.out.println("End date cannot be before start date.");
+            return;
         }
 
-        Reservation reservation = new Reservation(0, hotelRoom, startDate, endDate);
-
-        boolean reservationExists = reservationService.findAll().stream()
-               .anyMatch(existingReservation -> checkReservationIfExist(existingReservation, hotelRoom, startDate, endDate));
-
-        if (reservationExists) {
-            System.out.println("The room is already reserved for the selected dates.");
-        }
-
+        Reservation reservation = new Reservation(0, hotelRoom, client, startDate, endDate);
 
         reservationService.save(reservation);
         System.out.println("Reservation created successfully with ID: " + reservation.getId());
     }
 
-    private boolean checkReservationIfExist(Reservation existingReservation, HotelRoom hotelRoom, LocalDate startDate, LocalDate endDate) {
-        if (existingReservation.getRoomName().getId() != hotelRoom.getId()) {
-            return false;
-        }
-        LocalDate existingStartDate = existingReservation.getStartDate();
-        LocalDate existingEndDate = existingReservation.getEndDate();
-        return startDate.isBefore(existingEndDate) && endDate.isAfter(existingStartDate);
-    }
 
-
-    public void showById(){
+    public void showById() {
         System.out.println("Enter reservation id");
         int reservationId = scanner.nextInt();
 
-        try{
+        try {
             reservationService.findById(reservationId);
-        }catch (ReservationNotFoundException r){
+        } catch (ReservationNotFoundException r) {
             System.out.println(r.getMessage());
         }
     }
 
 
-
-    public void deleteReservation(){
+    public void deleteReservation() {
         System.out.println("Enter Reservation ID to reserve:");
-        int reservationId  = scanner.nextInt();
-        try{
+        int reservationId = scanner.nextInt();
+        try {
             reservationService.delete(reservationId);
             System.out.println("Reservation deleted Successfully.");
-        }catch(ReservationNotFoundException r){
+        } catch (ReservationNotFoundException r) {
             System.out.println(r.getMessage());
         }
     }
 
     public void showAll() {
-        reservationService.findAll().forEach(reservation -> System.out.println("ID: " + reservation.getId() + ", Name: " + reservation.getRoomName().getRoomName() + ", StartDate " + reservation.getStartDate() + ", EndDate " + reservation.getEndDate() + ", EndDate " + reservation.getEndDate()));
+        LocalDate date = LocalDate.now();
+        reservationService.findAll().stream()
+                .filter(reservation -> !reservation.getEndDate().equals(date))
+                .forEach(reservation -> System.out.println("ID: " + reservation.getId() + ", Name: " + reservation.getRoomName().getRoomName() + ", Client : " + reservation.getClient().getName() + ", StartDate " + reservation.getStartDate() + ", EndDate " + reservation.getEndDate()));
     }
 
-    public void editReservation()   {
+
+    public void clientMenu() {
+        ClientMenu clientMenu = new ClientMenu(clientService,hotelRoomService,reservationService);
+        clientMenu.showMenu();
+    }
+
+    public void editReservation() {
         System.out.println("Enter reservation room id");
         int reservationId = scanner.nextInt();
 
@@ -172,11 +177,19 @@ public class Menu {
         int roomId = scanner.nextInt();
         scanner.nextLine();
 
-        HotelRoom hotelRoom;
+        System.out.println("All Clients:");
+        clientService.findAll().forEach(client -> System.out.println("ID: " + client.getId() + ", Name: " + client.getName()));
 
+        System.out.println("Enter Client ID to reserve:");
+        int clientId = scanner.nextInt();
+        scanner.nextLine();
+
+        HotelRoom hotelRoom;
+        Client client;
         try {
+            client = clientService.findById(clientId);
             hotelRoom = hotelRoomService.findById(roomId);
-        } catch (HotelRoomNotFoundException e) {
+        } catch (HotelRoomNotFoundException | ClientNotFoundException e) {
             System.out.println(e.getMessage());
             return;
         }
@@ -189,10 +202,8 @@ public class Menu {
         String endDateInput = scanner.nextLine();
         LocalDate endDate = DateFormat.parseDate(endDateInput);
 
-        Reservation reservation = new Reservation(reservationId, hotelRoom, startDate, endDate);
+        Reservation reservation = new Reservation(reservationId, hotelRoom, client, startDate, endDate);
 
         reservationService.update(reservation);
     }
-
-
 }
