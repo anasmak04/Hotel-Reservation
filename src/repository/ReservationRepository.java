@@ -8,6 +8,8 @@ public interface ReservationRepository {
 
     Reservation save(Reservation reservation);
 
+//    List<Reservation> saveMultiple(List<Reservation> reservations);
+
     Reservation findById(int id);
 
     List<Reservation> findAll();

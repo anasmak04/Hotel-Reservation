@@ -3,7 +3,6 @@ package entities;
 
 
 import java.time.LocalDate;
-import java.util.Date;
 
 
 public class Reservation {
@@ -52,12 +51,5 @@ public class Reservation {
         this.endDate = endDate;
     }
 
-    @Override
-    public String toString() {
-        return "Reservation" +
-                "id=" + id +
-                ", roomName=" + roomName.getRoomName() +
-                ", startDate=" + startDate +
-                ", endDate=" + endDate;
-    }
+
 }

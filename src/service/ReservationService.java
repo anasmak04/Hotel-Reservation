@@ -23,10 +23,13 @@ public class ReservationService implements ReservationRepository {
         return reservation;
     }
 
+
+
     @Override
     public Reservation findById(int id) {
         return reservations.stream()
-                .filter(reservation -> reservation.getId() == id).findFirst().orElseThrow(() -> new ReservationNotFoundException("Reservation not found"));
+                .filter(reservation -> reservation.getId() == id)
+                .findFirst().orElseThrow(() -> new ReservationNotFoundException("Reservation not found"));
     }
 
 
@@ -42,13 +45,16 @@ public class ReservationService implements ReservationRepository {
     public Reservation update(Reservation reservation) {
         Reservation existingReservation = findById(reservation.getId());
         if (existingReservation != null) {
-            reservations.set(reservations.indexOf(existingReservation), reservation);
+            int index = reservations.indexOf(existingReservation);
+            reservations.set(index, reservation);
             return reservation;
-        } else {
+        }
+        else {
             System.out.println("Reservation not found");
             return null;
         }
     }
+
 
     @Override
     public void delete(int id) {
