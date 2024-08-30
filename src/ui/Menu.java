@@ -13,12 +13,17 @@ import java.util.Scanner;
 
 public class Menu {
 
-    ReservationService reservationService = new ReservationService();
-    HotelRoomService hotelRoomService = new HotelRoomService();
+    ReservationService reservationService;
+    HotelRoomService hotelRoomService;
+     Scanner scanner;
 
-    Scanner scanner = new Scanner(System.in);
+    public Menu() {
+        this.reservationService = new ReservationService();
+        this.hotelRoomService = new HotelRoomService();
+        this.scanner = new Scanner(System.in);
+    }
 
-    public  void showMenu() {
+    public void showMenu() {
         while (true) {
 
             System.out.println("\n===============================");
@@ -30,10 +35,12 @@ public class Menu {
             System.out.println("3. Show Reservation By Id");
             System.out.println("4. Delete Reservation By Id");
             System.out.println("5. Update Reservation By Id");
-            System.out.println("6. Exit");
+            System.out.println("6. Create New Room");
+            System.out.println("7. Exit");
             System.out.println("===============================");
 
             int choice = scanner.nextInt();
+            scanner.nextLine();
             switch (choice) {
                 case 1:
                     createReservation();
@@ -51,6 +58,9 @@ public class Menu {
                     editReservation();
                     break;
                 case 6:
+                    createRoom();
+                    break;
+                case 7:
                     return;
                 default:
                     System.out.println("Invalid choice");
@@ -58,6 +68,14 @@ public class Menu {
         }
     }
 
+
+    public void createRoom(){
+        System.out.println("Please enter a new room:");
+        String roomName = scanner.nextLine();
+        HotelRoom hotelRoom = new HotelRoom(0, roomName);
+        hotelRoom = hotelRoomService.save(hotelRoom);
+        System.out.println("Room created successfully with ID: " + hotelRoom.getId());
+    }
 
     public void createReservation(){
         System.out.println("Available Hotel Rooms:");
@@ -127,6 +145,8 @@ public class Menu {
             System.out.println(r.getMessage());
         }
     }
+
+
 
     public void deleteReservation(){
         System.out.println("Enter Reservation ID to reserve:");

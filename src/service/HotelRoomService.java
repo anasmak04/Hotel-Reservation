@@ -23,6 +23,13 @@ public class HotelRoomService implements HotelRoomRepository {
     }
 
     @Override
+    public HotelRoom save(HotelRoom hotelRoom) {
+        hotelRoom.setId(rooms.size() + 1);
+        rooms.add(hotelRoom);
+        return hotelRoom;
+    }
+
+    @Override
     public List<HotelRoom> findAll() {
         return rooms;
     }
