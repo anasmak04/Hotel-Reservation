@@ -2,6 +2,7 @@ package entities;
 
 
 
+import java.time.LocalDate;
 import java.util.Date;
 
 
@@ -9,10 +10,10 @@ public class Reservation {
 
     private int id;
     private HotelRoom roomName;
-    private Date startDate;
-    private Date endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
-    public Reservation(int id, HotelRoom roomName, Date startDate, Date endDate) {
+    public Reservation(int id, HotelRoom roomName, LocalDate startDate, LocalDate endDate) {
         this.id = id;
         this.roomName = roomName;
         this.startDate = startDate;
@@ -35,19 +36,19 @@ public class Reservation {
         this.roomName = roomName;
     }
 
-    public Date getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 

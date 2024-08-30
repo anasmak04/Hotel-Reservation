@@ -7,7 +7,7 @@ import service.ReservationService;
 import utils.DateFormat;
 
 import java.text.ParseException;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Scanner;
 
 public class Main {
@@ -83,14 +83,25 @@ public class Main {
             return;
         }
 
+        LocalDate DateNow = LocalDate.now();
 
         System.out.println("Enter Reservation Start Date (YYYY-MM-DD):");
         String startDateInput = scanner.nextLine();
-        Date startDate = DateFormat.parseDate(startDateInput);
+        LocalDate startDate = DateFormat.parseDate(startDateInput);
 
         System.out.println("Enter Reservation End Date (YYYY-MM-DD):");
         String endDateInput = scanner.nextLine();
-        Date endDate = DateFormat.parseDate(endDateInput);
+        LocalDate endDate = DateFormat.parseDate(endDateInput);
+
+        if (startDate.isBefore(DateNow)) {
+            System.out.println("Start date cannot be in the past.");
+            return;
+        }
+
+        if (endDate.isBefore(startDate)) {
+            System.out.println("End date cannot be before start date.");
+            return;
+        }
 
         Reservation reservation = new Reservation(0, hotelRoom, startDate, endDate);
 
@@ -116,7 +127,6 @@ public class Main {
             System.out.println(reservationService.findById(reservationId));
         } catch (ReservationNotFoundException e) {
             System.out.println(e.getMessage());
-            return;
         }
     }
 
@@ -141,11 +151,11 @@ public class Main {
 
         System.out.println("Enter Reservation Start Date (YYYY-MM-DD):");
         String startDateInput = scanner.nextLine();
-        Date startDate = DateFormat.parseDate(startDateInput);
+        LocalDate startDate = DateFormat.parseDate(startDateInput);
 
         System.out.println("Enter Reservation End Date (YYYY-MM-DD):");
         String endDateInput = scanner.nextLine();
-        Date endDate = DateFormat.parseDate(endDateInput);
+        LocalDate endDate = DateFormat.parseDate(endDateInput);
 
         Reservation reservation = new Reservation(reservationId, hotelRoom, startDate, endDate);
 
@@ -163,17 +173,17 @@ public class Main {
         }
     }
 
-    private boolean isExist(Reservation existingReservation, HotelRoom hotelRoom, Date startDate, Date endDate) {
+    private boolean isExist(Reservation existingReservation, HotelRoom hotelRoom, LocalDate startDate, LocalDate endDate) {
 //        System.out.println("Checking room ID: " + hotelRoom.getId() + " against existing reservation room ID: " + existingReservation.getRoomName().getId());
         if (existingReservation.getRoomName().getId() != hotelRoom.getId()) {
             return false;
         }
 
-        Date existingStartDate = existingReservation.getStartDate();
-        Date existingEndDate = existingReservation.getEndDate();
+        LocalDate existingStartDate = existingReservation.getStartDate();
+        LocalDate existingEndDate = existingReservation.getEndDate();
 
 //        System.out.println("Checking dates: new reservation [" + startDate + " to " + endDate + "] against existing reservation [" + existingStartDate + " to " + existingEndDate + "]");
-        return startDate.before(existingEndDate) && endDate.after(existingStartDate);
+        return startDate.isBefore(existingEndDate) && endDate.isAfter(existingStartDate);
     }
 
 

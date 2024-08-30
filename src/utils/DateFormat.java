@@ -1,14 +1,16 @@
 package utils;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 
 public class DateFormat {
 
-    private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd");
+    private static final DateTimeFormatter DATE_FORMATTER =  DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    public static Date parseDate(String date) throws  ParseException {
-        return DATE_FORMATTER.parse(date);
+    public static LocalDate parseDate(String date) {
+        return LocalDate.parse(date,DATE_FORMATTER);
     }
+
 }
