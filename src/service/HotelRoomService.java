@@ -13,18 +13,20 @@ public class HotelRoomService implements HotelRepository<HotelRoom> {
 
     private final List<HotelRoom> rooms = new ArrayList<>();
 
-    public HotelRoomService() {
-
-    }
 
     @Override
     public HotelRoom findById(int id) {
-        return rooms.stream().filter(r -> r.getId() == id).findFirst().orElseThrow((() -> new HotelRoomNotFoundException("hotel room not found")));
+        return rooms.stream().
+                filter(r -> r.getId() == id)
+                .findFirst().orElseThrow((() -> new HotelRoomNotFoundException("hotel room not found")));
     }
 
     @Override
     public List<HotelRoom> findAll() {
         LocalDate today = LocalDate.now();
+        if(rooms.isEmpty()) {
+            System.out.println("No hotel rooms found");
+        }
         return rooms.stream()
                 .filter(room -> room.getReservations().stream()
                         .noneMatch(reservation ->
@@ -32,11 +34,6 @@ public class HotelRoomService implements HotelRepository<HotelRoom> {
                                         && !reservation.getStartDate().isAfter(today)))
                 .collect(Collectors.toList());
     }
-
-
-
-
-
 
 
     @Override

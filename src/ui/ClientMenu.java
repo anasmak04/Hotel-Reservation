@@ -6,21 +6,20 @@ import service.ClientService;
 import service.HotelRoomService;
 import service.ReservationService;
 
-import java.awt.*;
 import java.util.Scanner;
 
 public class ClientMenu {
     private final ClientService clientService;
+    private final Scanner scanner;
     private final HotelRoomService hotelRoomService;
     private final ReservationService reservationService;
-    private final Scanner scanner;
-
     public ClientMenu(ClientService clientService, HotelRoomService hotelRoomService, ReservationService reservationService) {
         this.clientService = clientService;
-        this.hotelRoomService = hotelRoomService;
         this.reservationService = reservationService;
+        this.hotelRoomService = hotelRoomService;
         this.scanner = new Scanner(System.in);
     }
+
 
 
     public void showMenu() {
@@ -58,7 +57,7 @@ public class ClientMenu {
                     updateClient();
                     break;
                 case 6:
-                    menuPrincipal();
+                    menuPrincipal(hotelRoomService,reservationService);
                     break;
                 case 7:
                     return;
@@ -70,7 +69,9 @@ public class ClientMenu {
 
 
 
-    public void menuPrincipal() {
+
+
+    public void menuPrincipal(HotelRoomService hotelRoomService, ReservationService reservationService) {
         ReservationMenu reservationMenu = new ReservationMenu(clientService, hotelRoomService, reservationService);
         reservationMenu.showMenu();
     }
@@ -78,8 +79,6 @@ public class ClientMenu {
     public void saveClient(){
         System.out.println("Please enter your name: ");
         String name = scanner.nextLine();
-        scanner.nextLine();
-        scanner.nextLine();
         System.out.println("Please enter your phone: ");
         String phone = scanner.nextLine();
         Client client = new Client(0, name, phone);
@@ -102,8 +101,8 @@ public class ClientMenu {
         System.out.println("Please enter client id : ");
         int clientId = scanner.nextInt();
         try{
-            clientService.findById(clientId);
-            System.out.println("Client has been found");
+            Client fetchedClient = clientService.findById(clientId);
+            System.out.println("Id Client : " + fetchedClient.getId() + ", Name Client : " + fetchedClient.getName() + ", Phone Client : " + fetchedClient.getPhone() );
         }catch(ClientNotFoundException clientNotFoundException){
             System.out.println(clientNotFoundException.getMessage());
         }
@@ -111,17 +110,15 @@ public class ClientMenu {
 
     public void findClient(){
         clientService.findAll()
-                .forEach(client -> System.out.println("Client Id : " + client.getId() + "Client Name : " + client.getName() + "Client Phone : " + client.getPhone() ));
+                .forEach(client -> System.out.println("Client Id : " + client.getId() + ", Client Name : " + client.getName() + ", Client Phone : " + client.getPhone() ));
     }
 
 
     public void updateClient(){
         System.out.println("Please enter client id : ");
         int clientId = scanner.nextInt();
-        scanner.nextLine();
         System.out.println("Please enter client name : ");
         String clientName = scanner.nextLine();
-        scanner.nextLine();
         System.out.println("Please enter client phone : ");
         String clientPhone = scanner.nextLine();
         Client client = new Client(clientId,clientName, clientPhone);

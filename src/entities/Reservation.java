@@ -13,6 +13,8 @@ public class Reservation {
     private LocalDate startDate;
     private LocalDate endDate;
 
+    public Reservation(){}
+
     public Reservation(int id, HotelRoom roomName, Client client, LocalDate startDate, LocalDate endDate) {
         this.id = id;
         this.roomName = roomName;

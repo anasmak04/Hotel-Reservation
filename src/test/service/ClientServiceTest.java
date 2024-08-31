@@ -14,12 +14,14 @@ public class ClientServiceTest {
     private ClientService clientService;
     private Client client;
 
+
     @Before
     public void setUp() throws Exception {
         clientService = new ClientService();
         client = new Client(0 , "Anas", "212677693862");
         clientService.save(client);
     }
+
 
     @Test
    public void findById() {

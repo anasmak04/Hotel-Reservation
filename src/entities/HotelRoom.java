@@ -8,11 +8,15 @@ public class HotelRoom {
 
     private int id;
     private String roomName;
+    private RoomType roomType;
     private List<Reservation> reservations = new ArrayList<>();
 
-    public HotelRoom(int id, String roomName) {
+    public HotelRoom() {}
+
+    public HotelRoom(int id, String roomName, RoomType roomType) {
         this.id = id;
         this.roomName = roomName;
+        this.roomType = roomType;
     }
 
     public int getId() {
@@ -29,6 +33,14 @@ public class HotelRoom {
 
     public void setRoomName(String roomName) {
         this.roomName = roomName;
+    }
+
+    public RoomType getRoomType() {
+        return roomType;
+    }
+
+    public void setRoomType(RoomType roomType) {
+        this.roomType = roomType;
     }
 
     public List<Reservation> getReservations() {

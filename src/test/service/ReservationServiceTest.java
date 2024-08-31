@@ -3,6 +3,7 @@ package test.service;
 import entities.Client;
 import entities.HotelRoom;
 import entities.Reservation;
+import entities.RoomType;
 import exception.ReservationNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,8 +24,8 @@ public class ReservationServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        HotelRoom hotelRoom = new HotelRoom(1, "room test");
-        Client client = new Client(1, "jhon", "38924947893");
+        HotelRoom hotelRoom = new HotelRoom(1, "room test", RoomType.SINGLE);
+        Client client = new Client(1, "Jhon", "38924947893");
         reservationService = new ReservationService(new HotelRoomService(), new ClientService());
         reservation = new Reservation(0, hotelRoom, client, LocalDate.now() , LocalDate.now());
         reservationService.save(reservation);
@@ -54,7 +55,7 @@ public class ReservationServiceTest {
     @Test
     public void testUpdate(){
         Reservation fetchedReservation = reservationService.findById(reservation.getId());
-        HotelRoom hotelRoom = new HotelRoom(1, "room YYY");
+        HotelRoom hotelRoom = new HotelRoom(1, "room YYY", RoomType.SINGLE);
         fetchedReservation.setRoomName(hotelRoom);
         reservationService.update(fetchedReservation);
         assertEquals(fetchedReservation.getRoomName().getRoomName(), reservation.getRoomName().getRoomName());

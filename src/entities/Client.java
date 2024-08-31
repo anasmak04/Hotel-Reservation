@@ -11,6 +11,8 @@ public class Client {
     private String phone;
     private List<Reservation> reservations = new ArrayList<Reservation>();
 
+    public Client() {}
+
     public Client(int id, String name, String phone) {
         this.id = id;
         this.name = name;
@@ -56,4 +58,5 @@ public class Client {
     public void deleteReservation(Reservation reservation) {
         reservations.remove(reservation);
     }
+
 }

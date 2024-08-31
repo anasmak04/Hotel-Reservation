@@ -1,6 +1,7 @@
 package ui;
 
 import entities.HotelRoom;
+import entities.RoomType;
 import exception.HotelRoomNotFoundException;
 import service.ClientService;
 import service.HotelRoomService;
@@ -10,16 +11,16 @@ import java.util.Scanner;
 
 public class RoomMenu {
 
-    private final ClientService clientService;
     private final HotelRoomService hotelRoomService;
-    private final ReservationService reservationService;
     private final Scanner scanner;
+    private final ClientService clientService;
+    private final ReservationService reservationService;
 
-    public RoomMenu(ClientService clientService, HotelRoomService hotelRoomService, ReservationService reservationService, Scanner scanner) {
-        this.clientService = clientService;
+    public RoomMenu(HotelRoomService hotelRoomService, ClientService clientService, ReservationService reservationService) {
         this.hotelRoomService = hotelRoomService;
+        this.clientService = clientService;
         this.reservationService = reservationService;
-        this.scanner = scanner;
+        this.scanner = new Scanner(System.in);
     }
 
     public void HotelRoomMenu() {
@@ -28,7 +29,7 @@ public class RoomMenu {
             System.out.println("Welcome to the Room System");
             System.out.println("===============================");
             System.out.println("1. Create New Room");
-            System.out.println("2. Show All Room");
+            System.out.println("2. Available rooms");
             System.out.println("3. Show Room By Id");
             System.out.println("4. Update Room By Id");
             System.out.println("5. Delete Room By Id");
@@ -56,7 +57,7 @@ public class RoomMenu {
                     break;
 
                 case 6:
-                    MainMenu();
+                    MainMenu(clientService,reservationService);
                     break;
                 case 7:
                     return;
@@ -66,23 +67,27 @@ public class RoomMenu {
         }
     }
 
-    public void MainMenu() {
-        ReservationMenu menu = new ReservationMenu(clientService,hotelRoomService,reservationService);
-        menu.showMenu();
+    public void MainMenu(ClientService clientService, ReservationService reservationService) {
+        ReservationMenu reservationMenu = new ReservationMenu(clientService, hotelRoomService, reservationService);
+        reservationMenu.showMenu();
     }
 
     public void createRoom() {
         System.out.println("Please enter a new room:");
         String roomName = scanner.nextLine();
-        HotelRoom hotelRoom = new HotelRoom(0, roomName);
+        System.out.println("Please enter type of the room (SINGLE, DELUXE, SUITE, DELUXE):");
+        String roomTypeInput = scanner.nextLine();
+        RoomType roomType = RoomType.valueOf(roomTypeInput.toUpperCase());
+        HotelRoom hotelRoom = new HotelRoom(0, roomName, roomType);
         hotelRoom = hotelRoomService.save(hotelRoom);
         System.out.println("Room created successfully with ID: " + hotelRoom.getId());
     }
 
+
     public void showAllRoom() {
        hotelRoomService.findAll().forEach(room ->
                System.out.println("Room ID: " + room.getId()
-                       + ", Room Name: " + room.getRoomName()));
+                       + ", Room Name: " + room.getRoomName() + ", Type: " + room.getRoomType()));
     }
 
 
@@ -91,7 +96,8 @@ public class RoomMenu {
         int roomId = scanner.nextInt();
 
         try {
-            hotelRoomService.findById(roomId);
+            HotelRoom hotelRoom = hotelRoomService.findById(roomId);
+            System.out.println("Room Id: " + hotelRoom.getId() + ", Room Name: " + hotelRoom.getRoomName() + ", Type: " + hotelRoom.getRoomType());
         } catch (HotelRoomNotFoundException hotelRoomNotFoundException) {
             System.out.println(hotelRoomNotFoundException.getMessage());
         }
@@ -102,6 +108,7 @@ public class RoomMenu {
         int roomId = scanner.nextInt();
         try {
             hotelRoomService.delete(roomId);
+            System.out.println("Room deleted successfully with ID: " + roomId);
         } catch (HotelRoomNotFoundException hotelRoomNotFoundException) {
             System.out.println(hotelRoomNotFoundException.getMessage());
         }
@@ -115,7 +122,10 @@ public class RoomMenu {
 
         System.out.println("Please enter new room name:");
         String roomName = scanner.nextLine();
-        HotelRoom hotelRoom = new HotelRoom(roomId, roomName);
+        System.out.println("Please enter type of the room (SINGLE, DELUXE, SUITE, DELUXE):");
+        String roomTypeInput = scanner.nextLine();
+        RoomType roomType = RoomType.valueOf(roomTypeInput.toUpperCase());
+        HotelRoom hotelRoom = new HotelRoom(roomId, roomName, roomType);
         hotelRoomService.update(hotelRoom);
         System.out.println("Room updated successfully with ID: " + hotelRoom.getId());
     }

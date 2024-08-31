@@ -28,7 +28,6 @@ public class ReservationMenu {
         this.scanner = new Scanner(System.in);
     }
 
-
     public void showMenu() {
         while (true) {
 
@@ -80,9 +79,11 @@ public class ReservationMenu {
     }
 
     public void HotelRoomMenu() {
-        RoomMenu roomMenu = new RoomMenu(clientService,hotelRoomService,reservationService,scanner);
+        RoomMenu roomMenu = new RoomMenu(hotelRoomService,clientService,reservationService);
         roomMenu.HotelRoomMenu();
     }
+
+
 
 
     public void createReservation() {
@@ -90,12 +91,9 @@ public class ReservationMenu {
         System.out.println("Enter Hotel Room ID to reserve:");
         int roomId = scanner.nextInt();
         scanner.nextLine();
-
-
         System.out.println("Enter Client ID to reserve:");
         int clientId = scanner.nextInt();
         scanner.nextLine();
-
         HotelRoom hotelRoom;
         Client client;
         try {
@@ -136,6 +134,7 @@ public class ReservationMenu {
         System.out.println("Enter reservation id");
         int reservationId = scanner.nextInt();
 
+
         try {
             reservationService.findById(reservationId);
         } catch (ReservationNotFoundException r) {
@@ -171,7 +170,7 @@ public class ReservationMenu {
     public void editReservation() {
         System.out.println("Enter reservation room id");
         int reservationId = scanner.nextInt();
-
+        scanner.nextLine();
 
         System.out.println("Enter Hotel Room ID to reserve:");
         int roomId = scanner.nextInt();
@@ -182,7 +181,7 @@ public class ReservationMenu {
 
         System.out.println("Enter Client ID to reserve:");
         int clientId = scanner.nextInt();
-        scanner.nextLine();
+
 
         HotelRoom hotelRoom;
         Client client;

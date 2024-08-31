@@ -1,6 +1,7 @@
 package test.service;
 
 import entities.HotelRoom;
+import entities.RoomType;
 import exception.HotelRoomNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,13 +20,13 @@ public class HotelRoomServiceTest {
     @Before
     public void setUp() {
         hotelRoomService = new HotelRoomService();
-        hotelRoom = new HotelRoom(0, "Room 012");
+        hotelRoom = new HotelRoom(0, "Room 012", RoomType.SINGLE);
         hotelRoomService.save(hotelRoom);
     }
 
     @Test
     public void testSave() {
-        HotelRoom newHotelRoom = new HotelRoom(0, "Room 777");
+        HotelRoom newHotelRoom = new HotelRoom(0, "Room 777", RoomType.SINGLE);
         HotelRoom savedHotelRoom = hotelRoomService.save(newHotelRoom);
         assertEquals(savedHotelRoom.getId(), newHotelRoom.getId());
         assertEquals(savedHotelRoom.getRoomName(), newHotelRoom.getRoomName());

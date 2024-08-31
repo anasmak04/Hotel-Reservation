@@ -7,15 +7,14 @@ import repository.HotelRepository;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
 import java.util.stream.Collectors;
 
 public class ClientService implements HotelRepository<Client> {
 
     private final List<Client> clients = new ArrayList<>();
-    int clientId = 0;
+    int clientId = 1;
 
-    public ClientService() {
-    }
 
     @Override
     public Client findById(int id) {
@@ -28,12 +27,17 @@ public class ClientService implements HotelRepository<Client> {
     @Override
     public List<Client> findAll() {
         LocalDate today = LocalDate.now();
-        return clients.stream()
-                .filter(client -> client.getReservations().stream()
-                        .noneMatch(reservation ->
-                                !reservation.getEndDate().isBefore(today)
-                                        && !reservation.getStartDate().isAfter(today)))
-                .collect(Collectors.toList());
+
+        if(clients.isEmpty()) {
+            System.out.println("No clients found");
+        }
+
+            return clients.stream()
+                    .filter(client -> client.getReservations().stream()
+                            .noneMatch(reservation ->
+                                    !reservation.getEndDate().isBefore(today)
+                                            && !reservation.getStartDate().isAfter(today)))
+                    .collect(Collectors.toList());
     }
 
     @Override
@@ -56,6 +60,5 @@ public class ClientService implements HotelRepository<Client> {
         clients.add(client);
         return client;
     }
-
 
 }
