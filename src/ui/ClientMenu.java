@@ -13,13 +13,13 @@ public class ClientMenu {
     private final Scanner scanner;
     private final HotelRoomService hotelRoomService;
     private final ReservationService reservationService;
+
     public ClientMenu(ClientService clientService, HotelRoomService hotelRoomService, ReservationService reservationService) {
         this.clientService = clientService;
         this.reservationService = reservationService;
         this.hotelRoomService = hotelRoomService;
         this.scanner = new Scanner(System.in);
     }
-
 
 
     public void showMenu() {
@@ -57,7 +57,7 @@ public class ClientMenu {
                     updateClient();
                     break;
                 case 6:
-                    menuPrincipal(hotelRoomService,reservationService);
+                    menuPrincipal(hotelRoomService, reservationService);
                     break;
                 case 7:
                     return;
@@ -68,15 +68,12 @@ public class ClientMenu {
     }
 
 
-
-
-
     public void menuPrincipal(HotelRoomService hotelRoomService, ReservationService reservationService) {
         ReservationMenu reservationMenu = new ReservationMenu(clientService, hotelRoomService, reservationService);
         reservationMenu.showMenu();
     }
 
-    public void saveClient(){
+    public void saveClient() {
         System.out.println("Please enter your name: ");
         String name = scanner.nextLine();
         System.out.println("Please enter your phone: ");
@@ -86,45 +83,49 @@ public class ClientMenu {
         System.out.println("Your client has been saved");
     }
 
-    public void deleteClient(){
+    public void deleteClient() {
         System.out.println("Please enter if of client : ");
         int clientId = scanner.nextInt();
-        try{
+        try {
             clientService.delete(clientId);
             System.out.println("Client has been deleted");
-        }catch(ClientNotFoundException clientNotFoundException){
+        } catch (ClientNotFoundException clientNotFoundException) {
             System.out.println(clientNotFoundException.getMessage());
         }
     }
 
-    public void findClientById(){
+    public void findClientById() {
         System.out.println("Please enter client id : ");
         int clientId = scanner.nextInt();
-        try{
+        try {
             Client fetchedClient = clientService.findById(clientId);
-            System.out.println("Id Client : " + fetchedClient.getId() + ", Name Client : " + fetchedClient.getName() + ", Phone Client : " + fetchedClient.getPhone() );
-        }catch(ClientNotFoundException clientNotFoundException){
+            System.out.println("Id Client : " + fetchedClient.getId() + ", Name Client : " + fetchedClient.getName() + ", Phone Client : " + fetchedClient.getPhone());
+        } catch (ClientNotFoundException clientNotFoundException) {
             System.out.println(clientNotFoundException.getMessage());
         }
     }
 
-    public void findClient(){
+    public void findClient() {
         clientService.findAll()
-                .forEach(client -> System.out.println("Client Id : " + client.getId() + ", Client Name : " + client.getName() + ", Client Phone : " + client.getPhone() ));
+                .forEach(client -> System.out.println("Client Id : " + client.getId() + ", Client Name : " + client.getName() + ", Client Phone : " + client.getPhone()));
     }
 
 
-    public void updateClient(){
-        System.out.println("Please enter client id : ");
-        int clientId = scanner.nextInt();
-        System.out.println("Please enter client name : ");
-        String clientName = scanner.nextLine();
-        System.out.println("Please enter client phone : ");
-        String clientPhone = scanner.nextLine();
-        Client client = new Client(clientId,clientName, clientPhone);
-        clientService.update(client);
-        System.out.println("Client has been updated");
+    public void updateClient() {
+       try{
+           System.out.println("Please enter client id : ");
+           int clientId = scanner.nextInt();
+           scanner.nextLine();
+           System.out.println("Please enter client name : ");
+           String clientName = scanner.nextLine();
+           System.out.println("Please enter client phone : ");
+           String clientPhone = scanner.nextLine();
+           Client client = new Client(clientId, clientName, clientPhone);
+           clientService.update(client);
+           System.out.println("Client has been updated");
+       }catch(ClientNotFoundException clientNotFoundException){
+           System.out.println(clientNotFoundException.getMessage());
+       }
     }
-
 
 }

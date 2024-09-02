@@ -24,7 +24,6 @@ public class ReservationService implements HotelRepository<Reservation> {
     }
 
 
-
     @Override
     public Reservation save(Reservation reservation) {
         if (reservation.getEndDate() == null || reservation.getStartDate() == null) {

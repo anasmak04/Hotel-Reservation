@@ -62,4 +62,15 @@ public class HotelRoomService implements HotelRepository<HotelRoom> {
             return hotelRoom;
     }
 
+    public boolean isRoomAvailable(int roomId, LocalDate startDate, LocalDate endDate, int reservationId) {
+        HotelRoom room = findById(roomId);
+        return room.getReservations().stream()
+                .filter(reservation -> reservation.getId() != reservationId)
+                .noneMatch(reservation ->
+                        !(endDate.isBefore(reservation.getStartDate())
+                                || startDate.isAfter(reservation.getEndDate()))
+                );
+    }
 }
+
+
