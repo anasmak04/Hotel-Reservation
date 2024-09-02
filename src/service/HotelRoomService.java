@@ -5,20 +5,22 @@ import exception.HotelRoomNotFoundException;
 import repository.HotelRepository;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class HotelRoomService implements HotelRepository<HotelRoom> {
 
-    private final List<HotelRoom> rooms = new ArrayList<>();
-
+    private final Map<Integer,HotelRoom> rooms = new HashMap<>();
+    int hotelRoomId = 1;
 
     @Override
     public HotelRoom findById(int id) {
-        return rooms.stream().
-                filter(r -> r.getId() == id)
-                .findFirst().orElseThrow((() -> new HotelRoomNotFoundException("hotel room not found")));
+        if(rooms.get(id) != null) {
+            return rooms.get(id);
+        }
+        throw  new HotelRoomNotFoundException("Hotel Room Not Found");
     }
 
     @Override
@@ -27,7 +29,7 @@ public class HotelRoomService implements HotelRepository<HotelRoom> {
         if(rooms.isEmpty()) {
             System.out.println("No hotel rooms found");
         }
-        return rooms.stream()
+        return rooms.values().stream()
                 .filter(room -> room.getReservations().stream()
                         .noneMatch(reservation ->
                                 !reservation.getEndDate().isBefore(today)
@@ -38,28 +40,24 @@ public class HotelRoomService implements HotelRepository<HotelRoom> {
 
     @Override
     public HotelRoom save(HotelRoom hotelRoom) {
-        hotelRoom.setId(rooms.size() + 1);
-        rooms.add(hotelRoom);
+        hotelRoom.setId(hotelRoomId++);
+        rooms.put(hotelRoom.getId(), hotelRoom);
         return hotelRoom;
     }
 
     @Override
     public void delete(int id) {
-        if (rooms.isEmpty()) {
-            System.out.println("Hotel room is empty");
+        if(rooms.get(id) == null) {
+            throw  new HotelRoomNotFoundException("Hotel Room Not Found");
         }
-        HotelRoom hotelRoom = findById(id);
-        rooms.remove(hotelRoom);
-
+        rooms.remove(id);
     }
 
 
     @Override
     public HotelRoom update(HotelRoom hotelRoom) {
-        HotelRoom fetchedRoom = findById(hotelRoom.getId());
-            int index = rooms.indexOf(fetchedRoom);
-            rooms.set(index, hotelRoom);
-            return hotelRoom;
+        rooms.put(hotelRoom.getId(), hotelRoom);
+        return hotelRoom;
     }
 
     public boolean isRoomAvailable(int roomId, LocalDate startDate, LocalDate endDate, int reservationId) {
