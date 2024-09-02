@@ -14,9 +14,9 @@ import java.util.Map;
 
 public class ReservationService implements HotelRepository<Reservation> {
 
-    private final Map<Integer,Reservation> reservations;
-    private  int currentId = 1;
-    private final  HotelRoomService hotelRoomService;
+    private final Map<Integer, Reservation> reservations;
+    private int currentId = 1;
+    private final HotelRoomService hotelRoomService;
     private final ClientService clientService;
 
     public ReservationService(HotelRoomService hotelRoomService, ClientService clientService) {
@@ -52,7 +52,7 @@ public class ReservationService implements HotelRepository<Reservation> {
 
     @Override
     public List<Reservation> findAll() {
-        if(reservations.isEmpty()){
+        if (reservations.isEmpty()) {
             throw new ReservationNotFoundException("Reservation not found");
         }
         return reservations.values().stream().toList();
@@ -68,10 +68,16 @@ public class ReservationService implements HotelRepository<Reservation> {
     @Override
     public void delete(int id) {
         Reservation reservation = findById(id);
-        reservations.remove(id);
-        HotelRoom fetchedHotelRoom = hotelRoomService.findById(reservation.getRoomName().getId());
-        Client fetchedClient = clientService.findById(reservation.getClient().getId());
-        fetchedClient.addReservation(reservation);
-        fetchedHotelRoom.removeReservation(reservation);
+        if (reservation != null && reservation.getId() == id) {
+            HotelRoom fetchedHotelRoom = hotelRoomService.findById(reservation.getRoomName().getId());
+            Client fetchedClient = clientService.findById(reservation.getClient().getId());
+            fetchedClient.deleteReservation(reservation);
+            fetchedHotelRoom.removeReservation(reservation);
+            reservations.remove(id);
+        } else {
+            throw new ReservationNotFoundException("Reservation not found");
+        }
     }
+
+
 }

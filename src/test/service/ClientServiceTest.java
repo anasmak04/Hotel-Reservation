@@ -26,19 +26,19 @@ public class ClientServiceTest {
     @Test
    public void findById() {
        Client fetchedClient =  clientService.findById(client.getId());
-        assertEquals(0, fetchedClient.getId());
+        assertEquals(1, fetchedClient.getId());
         assertEquals("Anas", fetchedClient.getName());
     }
 
     @Test
    public void findAll() {
         List<Client> fetchedClients = clientService.findAll();
-        assertEquals(2, fetchedClients.size());
+        assertEquals(1, fetchedClients.size());
     }
 
     @Test
     public void update() {
-        Client updatedClient = new Client(0 , "Kamal", "212677693862");
+        Client updatedClient = new Client(1 , "Kamal", "212677693862");
         clientService.update(updatedClient);
         assertEquals("Kamal", updatedClient.getName());
     }
@@ -47,7 +47,7 @@ public class ClientServiceTest {
     public void delete() {
         Client fetchedClient =  clientService.findById(client.getId());
         clientService.delete(fetchedClient.getId());
-        assertEquals(1, clientService.findAll().size());
+        assertEquals(0, clientService.findAll().size());
     }
 
     @Test

@@ -20,13 +20,21 @@ import static org.junit.Assert.assertThrows;
 public class ReservationServiceTest {
     private ReservationService reservationService;
     private Reservation reservation;
-
+    private ClientService clientService;
+    private HotelRoomService hotelRoomService;
+    private Client client;
+    private HotelRoom hotelRoom;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp()  {
         HotelRoom hotelRoom = new HotelRoom(1, "room test", RoomType.SINGLE);
-        Client client = new Client(1, "Jhon", "38924947893");
-        reservationService = new ReservationService(new HotelRoomService(), new ClientService());
+         client = new Client(1, "Bilal", "38924947893");
+         clientService = new ClientService();
+         clientService.save(client);
+        hotelRoomService = new HotelRoomService();
+        hotelRoomService.save(hotelRoom);
+
+        reservationService = new ReservationService(hotelRoomService,clientService);
         reservation = new Reservation(0, hotelRoom, client, LocalDate.now() , LocalDate.now());
         reservationService.save(reservation);
     }
@@ -34,8 +42,9 @@ public class ReservationServiceTest {
     @Test
     public void testSave(){
         Reservation savedReservation = reservationService.save(reservation);
+        System.out.println("Id here : " + savedReservation.getId());
         assertEquals(savedReservation.getId(), reservation.getId());
-        assertEquals(savedReservation.getRoomName().getRoomName(), reservation.getRoomName().getRoomName());
+        assertEquals(savedReservation.getRoomName().getRoomName(), "room test");
     }
 
     @Test
@@ -45,12 +54,6 @@ public class ReservationServiceTest {
         assertEquals(fetchedReservation.getRoomName().getRoomName(), reservation.getRoomName().getRoomName());
     }
 
-    @Test
-    public void testDelete(){
-        Reservation fetchedReservation = reservationService.findById(reservation.getId());
-        reservationService.delete(fetchedReservation.getId());
-        assertThrows(ReservationNotFoundException.class, () -> reservationService.findById(reservation.getId()));
-    }
 
     @Test
     public void testUpdate(){
@@ -61,5 +64,13 @@ public class ReservationServiceTest {
         assertEquals(fetchedReservation.getRoomName().getRoomName(), reservation.getRoomName().getRoomName());
     }
 
+
+    @Test
+    public void testDelete() {
+        Reservation fetchedReservation = reservationService.findById(reservation.getId());
+        reservationService.delete(fetchedReservation.getId());
+        assertThrows(ReservationNotFoundException.class,
+                () -> reservationService.findById(fetchedReservation.getId()));
+    }
 
 }
