@@ -19,7 +19,7 @@ public class ClientService implements HotelRepository<Client> {
 
     @Override
     public Client findById(int id) {
-        if(clients.get(id) == null){
+        if(!clients.containsKey(id)){
             throw new ClientNotFoundException("Client Not Found ");
         }
         return clients.get(id);
@@ -49,7 +49,7 @@ public class ClientService implements HotelRepository<Client> {
 
     @Override
     public void delete(int id) {
-        if(clients.get(id) == null){
+        if(!clients.containsKey(id)){
             throw new ClientNotFoundException("Client Not Found ");
         }
         clients.remove(id);
