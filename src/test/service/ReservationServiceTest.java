@@ -20,23 +20,40 @@ import static org.junit.Assert.assertThrows;
 public class ReservationServiceTest {
     private ReservationService reservationService;
     private Reservation reservation;
-
+    private HotelRoomService hotelRoomService;
+    private ClientService clientService;
 
     @Before
     public void setUp() throws Exception {
+
+        hotelRoomService = new HotelRoomService();
+        clientService = new ClientService();
+
         HotelRoom hotelRoom = new HotelRoom(1, "room test", RoomType.SINGLE);
+        hotelRoomService.save(hotelRoom);
+
         Client client = new Client(1, "Jhon", "38924947893");
-        reservationService = new ReservationService(new HotelRoomService(), new ClientService());
-        reservation = new Reservation(0, hotelRoom, client, LocalDate.now() , LocalDate.now());
+        clientService.save(client);
+
+        reservationService = new ReservationService(hotelRoomService, clientService);
+
+        reservation = new Reservation(0, hotelRoom, client, LocalDate.now(), LocalDate.now());
         reservationService.save(reservation);
     }
 
+
     @Test
     public void testSave(){
-        Reservation savedReservation = reservationService.save(reservation);
-        assertEquals(savedReservation.getId(), reservation.getId());
-        assertEquals(savedReservation.getRoomName().getRoomName(), reservation.getRoomName().getRoomName());
+     Reservation fetchedReservation = reservationService.save(reservation);
+       HotelRoom fetchedHotelRoom =  hotelRoomService.findById(fetchedReservation.getRoomName().getId());
+       fetchedHotelRoom.addReservation(reservation);
+        Client fetchedClient =  clientService.findById(fetchedReservation.getClient().getId());
+        fetchedClient.addReservation(reservation);
+        assertEquals(2, reservation.getId());
+        assertEquals("room test", reservation.getRoomName().getRoomName());
     }
+
+
 
     @Test
     public void testFindById(){
@@ -61,9 +78,5 @@ public class ReservationServiceTest {
         assertEquals(fetchedReservation.getRoomName().getRoomName(), reservation.getRoomName().getRoomName());
     }
 
-    @Test
-    public void saveMultiple() {
-
-    }
 
 }

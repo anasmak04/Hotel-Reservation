@@ -55,8 +55,10 @@ public class HotelRoomService implements HotelRepository<HotelRoom> {
             System.out.println("Hotel room is empty");
         }
         HotelRoom hotelRoom = findById(id);
+        if(hotelRoom ==  null){
+            throw new HotelRoomNotFoundException("hotel room not found");
+        }
         rooms.remove(hotelRoom);
-
     }
 
 

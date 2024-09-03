@@ -1,5 +1,6 @@
 package test.service;
 
+
 import entities.HotelRoom;
 import entities.RoomType;
 import exception.HotelRoomNotFoundException;
@@ -66,7 +67,12 @@ public class HotelRoomServiceTest {
 
     @Test
     public void saveMultiple() {
-
+        HotelRoom hotelRoom1 = new HotelRoom(0, "ROOM101", RoomType.SINGLE);
+        HotelRoom hotelRoom2 = new HotelRoom(0, "ROOM102", RoomType.DELUXE);
+        List<HotelRoom> hotelRoomList = List.of(hotelRoom1, hotelRoom2);
+        hotelRoomService.saveMultiple(hotelRoomList);
+        assertEquals(2, hotelRoomList.size());
+        assertEquals("ROOM101", hotelRoomList.get(0).getRoomName());
     }
 
 }

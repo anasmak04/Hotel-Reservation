@@ -13,7 +13,6 @@ import java.util.List;
 public class ReservationService implements HotelRepository<Reservation> {
 
     private final List<Reservation> reservations;
-    private int currentId = 1;
     private final HotelRoomService hotelRoomService;
     private final ClientService clientService;
 
@@ -29,7 +28,7 @@ public class ReservationService implements HotelRepository<Reservation> {
         if (reservation.getEndDate() == null || reservation.getStartDate() == null) {
             throw new IllegalArgumentException("The reservation must have a start date and end date");
         } else {
-            reservation.setId(currentId++);
+            reservation.setId(reservations.size() + 1);
             reservations.add(reservation);
             HotelRoom fetchedHotelRoom = hotelRoomService.findById(reservation.getRoomName().getId());
             Client fetchedClient = clientService.findById(reservation.getClient().getId());
@@ -75,7 +74,7 @@ public class ReservationService implements HotelRepository<Reservation> {
         reservations.remove(reservation);
         HotelRoom fetchedHotelRoom = hotelRoomService.findById(reservation.getRoomName().getId());
         Client fetchedClient = clientService.findById(reservation.getClient().getId());
-        fetchedClient.addReservation(reservation);
+        fetchedClient.deleteReservation(reservation);
         fetchedHotelRoom.removeReservation(reservation);
     }
 }

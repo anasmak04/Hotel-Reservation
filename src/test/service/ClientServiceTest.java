@@ -1,6 +1,7 @@
 package test.service;
 
 import entities.Client;
+import exception.ClientNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import service.ClientService;
@@ -8,6 +9,7 @@ import service.ClientService;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 public class ClientServiceTest {
 
@@ -26,14 +28,14 @@ public class ClientServiceTest {
     @Test
    public void findById() {
        Client fetchedClient =  clientService.findById(client.getId());
-        assertEquals(0, fetchedClient.getId());
+        assertEquals(1, fetchedClient.getId());
         assertEquals("Anas", fetchedClient.getName());
     }
 
     @Test
    public void findAll() {
         List<Client> fetchedClients = clientService.findAll();
-        assertEquals(2, fetchedClients.size());
+        assertEquals(1, fetchedClients.size());
     }
 
     @Test
@@ -45,9 +47,9 @@ public class ClientServiceTest {
 
     @Test
     public void delete() {
-        Client fetchedClient =  clientService.findById(client.getId());
+        Client fetchedClient = clientService.findById(client.getId());
         clientService.delete(fetchedClient.getId());
-        assertEquals(1, clientService.findAll().size());
+        assertThrows(ClientNotFoundException.class, () -> clientService.findById(client.getId()));
     }
 
     @Test
@@ -60,6 +62,12 @@ public class ClientServiceTest {
 
     @Test
     public void saveMultiple() {
-
+        Client client1 = new Client(0, "AMINE", "21238932434");
+        Client client2 = new Client(0, "AYOUB", "21238932434");
+        List<Client> clientList = List.of(client1, client2);
+        clientService.saveMultiple(clientList);
+        assertEquals(2, clientList.size());
+        assertEquals("AMINE", clientList.get(0).getName());
+        System.out.println(clientList.get(0).getId());
     }
 }

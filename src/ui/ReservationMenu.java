@@ -44,7 +44,6 @@ public class ReservationMenu {
             System.out.println("7. Show Clients");
             System.out.println("8. Exit");
             System.out.println("===============================");
-
             int choice = scanner.nextInt();
             scanner.nextLine();
             switch (choice) {

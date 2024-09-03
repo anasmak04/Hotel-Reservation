@@ -7,21 +7,21 @@ import repository.HotelRepository;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+
 import java.util.List;
 
-import java.util.stream.Collectors;
 
 public class ClientService implements HotelRepository<Client> {
 
-    private final List< Client> clients = new ArrayList<>();
-    int clientId = 1;
+    private final List<Client> clients = new ArrayList<>();
+
 
 
     @Override
     public Client findById(int id) {
         return clients.stream().
                 filter(r -> r.getId() == id)
-                .findFirst().orElseThrow((() -> new HotelRoomNotFoundException("hotel room not found")));
+                .findFirst().orElseThrow((() -> new ClientNotFoundException("Client not found")));
     }
 
     @Override
@@ -35,7 +35,14 @@ public class ClientService implements HotelRepository<Client> {
                         .noneMatch(reservation ->
                                 !reservation.getEndDate().isBefore(today)
                                         && !reservation.getStartDate().isAfter(today)))
-                .collect(Collectors.toList());
+                .toList();
+    }
+
+    @Override
+    public Client save(Client client) {
+        client.setId(clients.size() + 1);
+        clients.add(client);
+        return client;
     }
 
     @Override
@@ -48,23 +55,22 @@ public class ClientService implements HotelRepository<Client> {
         if(clients.get(client.getId()) == null){
             throw new ClientNotFoundException("Client Not Found ");
         }
-         clients.add(client);
+         clients.add(client.getId(),client);
         return client;
     }
 
     @Override
     public void delete(int id) {
-        if(clients.get(id) == null){
+        if(clients.isEmpty()){
             throw new ClientNotFoundException("Client Not Found ");
         }
-        clients.remove(id);
+        Client client = findById(id);
+        if(client == null){
+            throw new ClientNotFoundException("Client  not found");
+        }
+        clients.remove(client);
     }
 
-    @Override
-    public Client save(Client client) {
-        client.setId(++clientId);
-        clients.add(client);
-        return client;
-    }
+
 
 }
