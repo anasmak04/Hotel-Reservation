@@ -12,9 +12,9 @@ import java.util.List;
 
 public class ReservationService implements HotelRepository<Reservation> {
 
-    private final   List<Reservation> reservations;
-    private  int currentId = 1;
-    private final  HotelRoomService hotelRoomService;
+    private final List<Reservation> reservations;
+    private int currentId = 1;
+    private final HotelRoomService hotelRoomService;
     private final ClientService clientService;
 
     public ReservationService(HotelRoomService hotelRoomService, ClientService clientService) {
@@ -50,9 +50,14 @@ public class ReservationService implements HotelRepository<Reservation> {
 
     @Override
     public List<Reservation> findAll() {
-        if(reservations.isEmpty())
+        if (reservations.isEmpty())
             throw new ReservationNotFoundException("Reservation not found");
         return reservations;
+    }
+
+    @Override
+    public List<Reservation> saveMultiple(List<Reservation> reservations) {
+        return reservations.stream().map(this::save).toList();
     }
 
     @Override

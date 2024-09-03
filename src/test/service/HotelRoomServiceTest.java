@@ -64,4 +64,9 @@ public class HotelRoomServiceTest {
         assertEquals(1, fetchedHotelRooms.size());
     }
 
+    @Test
+    public void saveMultiple() {
+
+    }
+
 }

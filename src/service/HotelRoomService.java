@@ -44,6 +44,12 @@ public class HotelRoomService implements HotelRepository<HotelRoom> {
     }
 
     @Override
+    public List<HotelRoom> saveMultiple(List<HotelRoom> hotelRooms) {
+        return hotelRooms.stream().map(this::save).toList();
+    }
+
+
+    @Override
     public void delete(int id) {
         if (rooms.isEmpty()) {
             System.out.println("Hotel room is empty");

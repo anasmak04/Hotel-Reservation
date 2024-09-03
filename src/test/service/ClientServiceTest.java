@@ -57,4 +57,9 @@ public class ClientServiceTest {
         System.out.println(fetchedClient.getId());
         assertEquals("Bilal", fetchedClient.getName());
     }
+
+    @Test
+    public void saveMultiple() {
+
+    }
 }

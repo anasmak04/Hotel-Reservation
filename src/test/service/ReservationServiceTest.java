@@ -61,5 +61,9 @@ public class ReservationServiceTest {
         assertEquals(fetchedReservation.getRoomName().getRoomName(), reservation.getRoomName().getRoomName());
     }
 
+    @Test
+    public void saveMultiple() {
+
+    }
 
 }

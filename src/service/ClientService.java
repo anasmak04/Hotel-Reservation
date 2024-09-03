@@ -2,27 +2,26 @@ package service;
 
 import entities.Client;
 import exception.ClientNotFoundException;
+import exception.HotelRoomNotFoundException;
 import repository.HotelRepository;
 
 import java.time.LocalDate;
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
 import java.util.List;
 
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ClientService implements HotelRepository<Client> {
 
-    private final Map<Integer, Client> clients = new LinkedHashMap<>();
+    private final List< Client> clients = new ArrayList<>();
     int clientId = 1;
 
 
     @Override
     public Client findById(int id) {
-        if(clients.get(id) == null){
-            throw new ClientNotFoundException("Client Not Found ");
-        }
-        return clients.get(id);
+        return clients.stream().
+                filter(r -> r.getId() == id)
+                .findFirst().orElseThrow((() -> new HotelRoomNotFoundException("hotel room not found")));
     }
 
     @Override
@@ -31,7 +30,7 @@ public class ClientService implements HotelRepository<Client> {
         if (clients.isEmpty()) {
             System.out.println("No clients found");
         }
-        return clients.values().stream()
+        return clients.stream()
                 .filter(client -> client.getReservations().stream()
                         .noneMatch(reservation ->
                                 !reservation.getEndDate().isBefore(today)
@@ -40,11 +39,17 @@ public class ClientService implements HotelRepository<Client> {
     }
 
     @Override
+    public List<Client> saveMultiple(List<Client> clients) {
+        return clients.stream().map(this::save).toList();
+    }
+
+    @Override
     public Client update(Client client) {
         if(clients.get(client.getId()) == null){
             throw new ClientNotFoundException("Client Not Found ");
         }
-        return clients.put(client.getId(), client);
+         clients.add(client);
+        return client;
     }
 
     @Override
@@ -57,8 +62,8 @@ public class ClientService implements HotelRepository<Client> {
 
     @Override
     public Client save(Client client) {
-        client.setId(clientId++);
-        clients.put(client.getId(), client);
+        client.setId(++clientId);
+        clients.add(client);
         return client;
     }
 
