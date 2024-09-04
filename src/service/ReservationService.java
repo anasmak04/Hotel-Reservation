@@ -10,8 +10,6 @@ import repository.HotelRepository;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
 
 public class ReservationService implements HotelRepository<Reservation> {
 
@@ -33,7 +31,7 @@ public class ReservationService implements HotelRepository<Reservation> {
             throw new IllegalArgumentException("The reservation must have a start date and end date");
         } else {
             reservation.setId(currentId++);
-            reservations.put(currentId++, reservation);
+            reservations.put(reservation.getId(), reservation);
             HotelRoom fetchedHotelRoom = hotelRoomService.findById(reservation.getRoomName().getId());
             Client fetchedClient = clientService.findById(reservation.getClient().getId());
             fetchedClient.addReservation(reservation);
@@ -41,6 +39,7 @@ public class ReservationService implements HotelRepository<Reservation> {
         }
         return reservation;
     }
+
 
 
     @Override
@@ -88,9 +87,8 @@ public class ReservationService implements HotelRepository<Reservation> {
     }
 
     @Override
-    public List<Reservation> saveMultiple(List<Reservation> t) {
-        return List.of();
+    public List<Reservation> saveMultiple(List<Reservation> reservationList) {
+        return reservationList.stream().map(this::save).toList();
     }
-
 
 }

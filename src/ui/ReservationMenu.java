@@ -6,6 +6,7 @@ import entities.Reservation;
 import exception.ClientNotFoundException;
 import exception.HotelRoomNotFoundException;
 import exception.ReservationNotFoundException;
+import org.hamcrest.core.IsInstanceOf;
 import service.ClientService;
 import service.HotelRoomService;
 import service.ReservationService;
@@ -128,6 +129,7 @@ public class ReservationMenu {
             return;
         }
 
+
         Reservation reservation = new Reservation(0, hotelRoom, client, startDate, endDate);
 
         reservationService.save(reservation);
@@ -139,9 +141,17 @@ public class ReservationMenu {
         System.out.println("Enter reservation id");
         int reservationId = scanner.nextInt();
 
-
         try {
-            reservationService.findById(reservationId);
+            Reservation fetchedReservation = reservationService.findById(reservationId);
+            System.out.println(String.format(
+                    "Reservation ID: %d\nClient Name: %s\nClient Phone: %s\nRoom Name: %s\nStart Date: %s\nEnd Date: %s",
+                    fetchedReservation.getId(),
+                    fetchedReservation.getClient().getName(),
+                    fetchedReservation.getClient().getPhone(),
+                    fetchedReservation.getRoomName().getRoomName(),
+                    fetchedReservation.getStartDate(),
+                    fetchedReservation.getEndDate()
+            ));
         } catch (ReservationNotFoundException r) {
             System.out.println(r.getMessage());
         }
@@ -160,11 +170,26 @@ public class ReservationMenu {
     }
 
     public void showAll() {
-        LocalDate date = LocalDate.now();
-        reservationService.findAll().stream()
-                .filter(reservation -> !reservation.getEndDate().equals(date))
-                .forEach(reservation -> System.out.println("ID: " + reservation.getId() + ", Name: " + reservation.getRoomName().getRoomName() + ", Client : " + reservation.getClient().getName() + ", StartDate " + reservation.getStartDate() + ", EndDate " + reservation.getEndDate()));
+//        LocalDate date = LocalDate.now();
+       try{
+           reservationService.findAll().stream()
+                   .forEach(reservation ->
+                           System.out.println(String.format(
+                                   "ID: %d\nRoom Name: %s\nClient Name: %s\nClient Phone: %s\nStart Date: %s\nEnd Date: %s",
+                                   reservation.getId(),
+                                   reservation.getRoomName().getRoomName(),
+                                   reservation.getClient().getName(),
+                                   reservation.getClient().getPhone(),
+                                   reservation.getStartDate(),
+                                   reservation.getEndDate()
+                           ))
+                   );
+       }catch (ReservationNotFoundException r){
+           System.out.println(r.getMessage());
+       }
     }
+
+
 
 
     public void clientMenu() {

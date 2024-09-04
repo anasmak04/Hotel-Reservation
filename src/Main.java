@@ -32,9 +32,8 @@ public class Main {
         List<HotelRoom> hotelRoomList = List.of(hotelRoom1,hotelRoom2,hotelRoom3,hotelRoom4);
         hotelRoomService.saveMultiple(hotelRoomList);
 
+
          ReservationMenu reservationMenu = new ReservationMenu(clientService,hotelRoomService,reservationService);
         reservationMenu.showMenu();
-
-
     }
 }

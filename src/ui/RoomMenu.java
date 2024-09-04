@@ -115,18 +115,22 @@ public class RoomMenu {
     }
 
     public void update() {
-        System.out.println("enter id of room that u want to update");
-        int roomId = scanner.nextInt();
+       try{
+           System.out.println("enter id of room that u want to update");
+           int roomId = scanner.nextInt();
 
-        scanner.nextLine();
+           scanner.nextLine();
 
-        System.out.println("Please enter new room name:");
-        String roomName = scanner.nextLine();
-        System.out.println("Please enter type of the room (SINGLE, DELUXE, SUITE, DELUXE):");
-        String roomTypeInput = scanner.nextLine();
-        RoomType roomType = RoomType.valueOf(roomTypeInput.toUpperCase());
-        HotelRoom hotelRoom = new HotelRoom(roomId, roomName, roomType);
-        hotelRoomService.update(hotelRoom);
-        System.out.println("Room updated successfully with ID: " + hotelRoom.getId());
+           System.out.println("Please enter new room name:");
+           String roomName = scanner.nextLine();
+           System.out.println("Please enter type of the room (SINGLE, DELUXE, SUITE, DELUXE):");
+           String roomTypeInput = scanner.nextLine();
+           RoomType roomType = RoomType.valueOf(roomTypeInput.toUpperCase());
+           HotelRoom hotelRoom = new HotelRoom(roomId, roomName, roomType);
+           hotelRoomService.update(hotelRoom);
+           System.out.println("Room updated successfully with ID: " + hotelRoom.getId());
+       }catch (HotelRoomNotFoundException hotelRoomNotFoundException) {
+           System.out.println(hotelRoomNotFoundException.getMessage());
+       }
     }
 }

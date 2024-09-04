@@ -8,25 +8,27 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
+
 
 public class HotelRoomService implements HotelRepository<HotelRoom> {
 
-    private final Map<Integer,HotelRoom> rooms = new HashMap<>();
+    private final Map<Integer, HotelRoom> rooms = new HashMap<>();
     int hotelRoomId = 1;
 
     @Override
     public HotelRoom findById(int id) {
-        if(rooms.containsKey(id)) {
+        if (rooms.containsKey(id)) {
             return rooms.get(id);
         }
-        throw  new HotelRoomNotFoundException("Hotel Room Not Found");
+        throw new HotelRoomNotFoundException("Hotel Room Not Found");
     }
+
 
     @Override
     public List<HotelRoom> findAll() {
         LocalDate today = LocalDate.now();
-        if(rooms.isEmpty()) {
+        if (rooms.isEmpty()) {
             System.out.println("No hotel rooms found");
         }
         return rooms.values().stream()
@@ -34,7 +36,7 @@ public class HotelRoomService implements HotelRepository<HotelRoom> {
                         .noneMatch(reservation ->
                                 !reservation.getEndDate().isBefore(today)
                                         && !reservation.getStartDate().isAfter(today)))
-                .collect(Collectors.toList());
+                .toList();
     }
 
 
@@ -47,16 +49,16 @@ public class HotelRoomService implements HotelRepository<HotelRoom> {
 
     @Override
     public void delete(int id) {
-        if(rooms.get(id) == null) {
-            throw  new HotelRoomNotFoundException("Hotel Room Not Found");
+        if (rooms.get(id) == null) {
+            throw new HotelRoomNotFoundException("Hotel Room Not Found");
         }
         rooms.remove(id);
     }
 
     @Override
     public HotelRoom findByName(String name) {
-        for(Map.Entry<Integer, HotelRoom> entry : rooms.entrySet()){
-            if(entry.getValue().getRoomName().equals(name)) {
+        for (Map.Entry<Integer, HotelRoom> entry : rooms.entrySet()) {
+            if (entry.getValue().getRoomName().equals(name)) {
                 return entry.getValue();
             }
         }
@@ -68,9 +70,11 @@ public class HotelRoomService implements HotelRepository<HotelRoom> {
         return hotelRoomList.stream().map(this::save).toList();
     }
 
-
     @Override
     public HotelRoom update(HotelRoom hotelRoom) {
+       if(hotelRoom == null){
+           throw new HotelRoomNotFoundException("Hotel Room Not Found");
+       }
         rooms.put(hotelRoom.getId(), hotelRoom);
         return hotelRoom;
     }
