@@ -6,7 +6,6 @@ import entities.Reservation;
 import exception.ClientNotFoundException;
 import exception.HotelRoomNotFoundException;
 import exception.ReservationNotFoundException;
-import org.hamcrest.core.IsInstanceOf;
 import service.ClientService;
 import service.HotelRoomService;
 import service.ReservationService;
@@ -38,11 +37,11 @@ public class ReservationMenu {
             System.out.println("Please enter your choice:");
             System.out.println("1. Enter New Reservation");
             System.out.println("2. Show All Reservations");
-            System.out.println("3. Show Reservation By Id");
-            System.out.println("4. Delete Reservation By Id");
-            System.out.println("5. Update Reservation By Id");
-            System.out.println("6. Show Rooms");
-            System.out.println("7. Show Clients");
+            System.out.println("3. Show Reservation by ID");
+            System.out.println("4. Delete Reservation by ID");
+            System.out.println("5. Update Reservation by ID");
+            System.out.println("6. Show Available Rooms");
+            System.out.println("7. Show All Clients");
             System.out.println("8. Exit");
             System.out.println("===============================");
 
@@ -216,6 +215,7 @@ public class ReservationMenu {
         HotelRoom hotelRoom;
         Client client;
         try {
+            client = clientService.findById(clientId);
             client = clientService.findById(clientId);
             hotelRoom = hotelRoomService.findById(roomId);
         } catch (HotelRoomNotFoundException | ClientNotFoundException e) {

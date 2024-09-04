@@ -35,7 +35,7 @@ public class ClientMenu {
             System.out.println("4. Delete Client By Id");
             System.out.println("5. Update Client By Id");
             System.out.println("6. Search By Client Name");
-            System.out.println("7. Menu principal");
+            System.out.println("7. Main Menu");
             System.out.println("8. Exit");
             System.out.println("===============================");
 
