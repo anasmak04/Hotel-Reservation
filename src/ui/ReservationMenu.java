@@ -44,36 +44,41 @@ public class ReservationMenu {
             System.out.println("7. Show All Clients");
             System.out.println("8. Exit");
             System.out.println("===============================");
+            if (!scanner.hasNextInt()) {
+                System.out.println("Please enter a valid option!");
+            }
 
-            int choice = scanner.nextInt();
-            scanner.nextLine();
-            switch (choice) {
-                case 1:
-                    createReservation();
-                    break;
-                case 2:
-                    showAll();
-                    break;
-                case 3:
-                    showById();
-                    break;
-                case 4:
-                    deleteReservation();
-                    break;
-                case 5:
-                    editReservation();
-                    break;
+            else {
+                int choice = scanner.nextInt();
+                scanner.nextLine();
+                switch (choice) {
+                    case 1:
+                        createReservation();
+                        break;
+                    case 2:
+                        showAll();
+                        break;
+                    case 3:
+                        showById();
+                        break;
+                    case 4:
+                        deleteReservation();
+                        break;
+                    case 5:
+                        editReservation();
+                        break;
 
-                case 6:
-                    HotelRoomMenu();
-                    break;
-                case 7:
-                    clientMenu();
-                    break;
-                case 8:
-                    return;
-                default:
-                    System.out.println("Invalid choice");
+                    case 6:
+                        HotelRoomMenu();
+                        break;
+                    case 7:
+                        clientMenu();
+                        break;
+                    case 8:
+                        return;
+                    default:
+                        System.out.println("Invalid choice");
+                }
             }
         }
     }
@@ -129,22 +134,22 @@ public class ReservationMenu {
         }
 
 
-        Reservation reservation = new Reservation(0, hotelRoom, client, startDate, endDate);
+
+        Reservation reservation = new Reservation(hotelRoom, client, startDate, endDate);
 
         reservationService.save(reservation);
-        System.out.println("Reservation created successfully with ID: " + reservation.getId());
     }
 
 
     public void showById() {
         System.out.println("Enter reservation id");
         int reservationId = scanner.nextInt();
-
+        scanner.nextLine();
         try {
             Reservation fetchedReservation = reservationService.findById(reservationId);
             System.out.println(String.format(
                     "Reservation ID: %d\nClient Name: %s\nClient Phone: %s\nRoom Name: %s\nStart Date: %s\nEnd Date: %s",
-                    fetchedReservation.getId(),
+                    reservationId,
                     fetchedReservation.getClient().getName(),
                     fetchedReservation.getClient().getPhone(),
                     fetchedReservation.getRoomName().getRoomName(),
@@ -155,6 +160,7 @@ public class ReservationMenu {
             System.out.println(r.getMessage());
         }
     }
+
 
 
     public void deleteReservation() {
@@ -175,12 +181,12 @@ public class ReservationMenu {
                    .forEach(reservation ->
                            System.out.println(String.format(
                                    "ID: %d\nRoom Name: %s\nClient Name: %s\nClient Phone: %s\nStart Date: %s\nEnd Date: %s",
-                                   reservation.getId(),
-                                   reservation.getRoomName().getRoomName(),
-                                   reservation.getClient().getName(),
-                                   reservation.getClient().getPhone(),
-                                   reservation.getStartDate(),
-                                   reservation.getEndDate()
+                                   reservation.getKey(),
+                                   reservation.getValue().getRoomName().getRoomName(),
+                                   reservation.getValue().getClient().getName(),
+                                   reservation.getValue().getClient().getPhone(),
+                                   reservation.getValue().getStartDate(),
+                                   reservation.getValue().getEndDate()
                            ))
                    );
        }catch (ReservationNotFoundException r){
@@ -197,7 +203,7 @@ public class ReservationMenu {
     }
 
     public void editReservation() {
-        System.out.println("Enter reservation room id");
+        System.out.println("Enter Reservation Id");
         int reservationId = scanner.nextInt();
         scanner.nextLine();
 
@@ -205,17 +211,16 @@ public class ReservationMenu {
         int roomId = scanner.nextInt();
         scanner.nextLine();
 
-        System.out.println("All Clients:");
-        clientService.findAll().forEach(client -> System.out.println("ID: " + client.getId() + ", Name: " + client.getName()));
+
 
         System.out.println("Enter Client ID to reserve:");
         int clientId = scanner.nextInt();
+        scanner.nextLine();
 
 
         HotelRoom hotelRoom;
         Client client;
         try {
-            client = clientService.findById(clientId);
             client = clientService.findById(clientId);
             hotelRoom = hotelRoomService.findById(roomId);
         } catch (HotelRoomNotFoundException | ClientNotFoundException e) {
@@ -236,8 +241,7 @@ public class ReservationMenu {
             return;
         }
 
-        Reservation reservation = new Reservation(reservationId, hotelRoom, client, startDate, endDate);
-
-        reservationService.update(reservation);
+        Reservation reservation = new Reservation(hotelRoom, client, startDate, endDate);
+        reservationService.update(reservationId,reservation);
     }
 }

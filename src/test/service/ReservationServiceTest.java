@@ -28,48 +28,48 @@ public class ReservationServiceTest {
 
     @Before
     public void setUp()  {
-        HotelRoom hotelRoom = new HotelRoom(1, "room test", RoomType.SINGLE);
-         client = new Client(1, "Bilal", "38924947893");
+        HotelRoom hotelRoom = new HotelRoom("room test", RoomType.SINGLE);
+         client = new Client("Bilal", "38924947893");
          clientService = new ClientService();
          clientService.save(client);
         hotelRoomService = new HotelRoomService();
         hotelRoomService.save(hotelRoom);
 
         reservationService = new ReservationService(hotelRoomService,clientService);
-        reservation = new Reservation(0, hotelRoom, client, LocalDate.now() , LocalDate.now());
+        reservation = new Reservation(hotelRoom, client, LocalDate.now() , LocalDate.now());
     }
 
     @Test
     public void testSave(){
         Reservation savedReservation = reservationService.save(reservation);
-        assertEquals(savedReservation.getId(), reservation.getId());
+        assertEquals(savedReservation.getReservationId(), reservation.getReservationId());
         assertEquals(savedReservation.getRoomName().getRoomName(), "room test");
     }
 
     @Test
     public void testFindById(){
-        Reservation fetchedReservation = reservationService.findById(reservation.getId());
-        assertEquals(fetchedReservation.getId(), reservation.getId());
+        Reservation fetchedReservation = reservationService.findById(reservation.getReservationId());
+        assertEquals(fetchedReservation.getReservationId(), reservation.getReservationId());
         assertEquals(fetchedReservation.getRoomName().getRoomName(), reservation.getRoomName().getRoomName());
     }
 
 
     @Test
     public void testUpdate(){
-        Reservation fetchedReservation = reservationService.findById(reservation.getId());
-        HotelRoom hotelRoom = new HotelRoom(1, "room YYY", RoomType.SINGLE);
+        Reservation fetchedReservation = reservationService.findById(reservation.getReservationId());
+        HotelRoom hotelRoom = new HotelRoom("room YYY", RoomType.SINGLE);
         fetchedReservation.setRoomName(hotelRoom);
-        reservationService.update(fetchedReservation);
+        reservationService.update(fetchedReservation.getReservationId(), fetchedReservation);
         assertEquals(fetchedReservation.getRoomName().getRoomName(), reservation.getRoomName().getRoomName());
     }
 
 
     @Test
     public void testDelete() {
-        Reservation fetchedReservation = reservationService.findById(reservation.getId());
-        reservationService.delete(fetchedReservation.getId());
+        Reservation fetchedReservation = reservationService.findById(reservation.getReservationId());
+        reservationService.delete(fetchedReservation.getReservationId());
         assertThrows(ReservationNotFoundException.class,
-                () -> reservationService.findById(fetchedReservation.getId()));
+                () -> reservationService.findById(fetchedReservation.getReservationId()));
     }
 
 }

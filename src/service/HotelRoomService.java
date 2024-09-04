@@ -8,10 +8,10 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
-
-public class HotelRoomService implements HotelRepository<HotelRoom> {
+public class HotelRoomService implements HotelRepository<HotelRoom,Integer> {
 
     private final Map<Integer, HotelRoom> rooms = new HashMap<>();
     int hotelRoomId = 1;
@@ -26,24 +26,26 @@ public class HotelRoomService implements HotelRepository<HotelRoom> {
 
 
     @Override
-    public List<HotelRoom> findAll() {
+    public List<Map.Entry<Integer, HotelRoom>> findAll() {
         LocalDate today = LocalDate.now();
         if (rooms.isEmpty()) {
             System.out.println("No hotel rooms found");
         }
-        return rooms.values().stream()
-                .filter(room -> room.getReservations().stream()
+        Set<Map.Entry<Integer, HotelRoom>> entry = rooms.entrySet();
+
+        return entry.stream()
+                .filter(room -> room.getValue().getReservations().stream()
                         .noneMatch(reservation ->
-                                !reservation.getEndDate().isBefore(today)
-                                        && !reservation.getStartDate().isAfter(today)))
+                                !reservation.getValue().getEndDate().isBefore(today)
+                                        && !reservation.getValue().getStartDate().isAfter(today)))
                 .toList();
     }
 
 
+
     @Override
     public HotelRoom save(HotelRoom hotelRoom) {
-        hotelRoom.setId(hotelRoomId++);
-        rooms.put(hotelRoom.getId(), hotelRoom);
+        rooms.put(hotelRoomId++, hotelRoom);
         return hotelRoom;
     }
 
@@ -71,21 +73,21 @@ public class HotelRoomService implements HotelRepository<HotelRoom> {
     }
 
     @Override
-    public HotelRoom update(HotelRoom hotelRoom) {
+    public HotelRoom update(int id , HotelRoom hotelRoom) {
        if(hotelRoom == null){
            throw new HotelRoomNotFoundException("Hotel Room Not Found");
        }
-        rooms.put(hotelRoom.getId(), hotelRoom);
+        rooms.put(id, hotelRoom);
         return hotelRoom;
     }
 
     public boolean isRoomAvailable(int roomId, LocalDate startDate, LocalDate endDate, int reservationId) {
         HotelRoom room = findById(roomId);
         return room.getReservations().stream()
-                .filter(reservation -> reservation.getId() != reservationId)
+                .filter(reservation -> reservation.getKey() != reservationId)
                 .noneMatch(reservation ->
-                        !(endDate.isBefore(reservation.getStartDate())
-                                || startDate.isAfter(reservation.getEndDate()))
+                        !(endDate.isBefore(reservation.getValue().getStartDate())
+                                || startDate.isAfter(reservation.getValue().getEndDate()))
                 );
     }
 }

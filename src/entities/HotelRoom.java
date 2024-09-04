@@ -1,30 +1,20 @@
 package entities;
 
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class HotelRoom {
 
-    private int id;
     private String roomName;
     private RoomType roomType;
-    private List<Reservation> reservations = new ArrayList<>();
-
+    private Map<Integer,Reservation> reservations;
+    private int roomId = 1;
     public HotelRoom() {}
 
-    public HotelRoom(int id, String roomName, RoomType roomType) {
-        this.id = id;
+    public HotelRoom(String roomName, RoomType roomType) {
         this.roomName = roomName;
         this.roomType = roomType;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+        this.reservations = new LinkedHashMap<>();
     }
 
     public String getRoomName() {
@@ -43,19 +33,23 @@ public class HotelRoom {
         this.roomType = roomType;
     }
 
-    public List<Reservation> getReservations() {
-        return reservations;
+    public Set<Map.Entry<Integer, Reservation>> getReservations() {
+        return reservations.entrySet();
     }
 
-    public void setReservations(List<Reservation> reservations) {
-        this.reservations = reservations;
+    public int getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(int roomId) {
+        this.roomId = roomId;
     }
 
     public  void addReservation(Reservation reservation) {
-        reservations.add(reservation);
+        reservations.put(roomId++,reservation);
     }
 
-    public void removeReservation(Reservation reservation) {
-        reservations.remove(reservation);
+    public void removeReservation(int id) {
+        reservations.remove(id);
     }
 }

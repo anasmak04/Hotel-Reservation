@@ -39,34 +39,40 @@ public class ClientMenu {
             System.out.println("8. Exit");
             System.out.println("===============================");
 
-            int choice = scanner.nextInt();
-            scanner.nextLine();
-            switch (choice) {
-                case 1:
-                    saveClient();
-                    break;
-                case 2:
-                    findClient();
-                    break;
-                case 3:
-                    findClientById();
-                    break;
-                case 4:
-                    deleteClient();
-                    break;
-                case 5:
-                    updateClient();
-                    break;
-                case 6:
-                    searchByName();
-                    break;
-                case 7:
-                    menuPrincipal(hotelRoomService, reservationService);
-                    break;
-                case 8:
-                    return;
-                default:
-                    System.out.println("Invalid choice");
+            if (!scanner.hasNextInt()){
+                System.out.println("Please enter a valid option!");
+            }
+
+            else {
+                int choice = scanner.nextInt();
+                scanner.nextLine();
+                switch (choice) {
+                    case 1:
+                        saveClient();
+                        break;
+                    case 2:
+                        findClient();
+                        break;
+                    case 3:
+                        findClientById();
+                        break;
+                    case 4:
+                        deleteClient();
+                        break;
+                    case 5:
+                        updateClient();
+                        break;
+                    case 6:
+                        searchByName();
+                        break;
+                    case 7:
+                        menuPrincipal(hotelRoomService, reservationService);
+                        break;
+                    case 8:
+                        return;
+                    default:
+                        System.out.println("Invalid choice");
+                }
             }
         }
     }
@@ -82,7 +88,7 @@ public class ClientMenu {
         String name = scanner.nextLine();
         System.out.println("Please enter your phone: ");
         String phone = scanner.nextLine();
-        Client client = new Client(0, name, phone);
+        Client client = new Client(name, phone);
         clientService.save(client);
         System.out.println("Your client has been saved");
     }
@@ -92,7 +98,7 @@ public class ClientMenu {
         int clientId = scanner.nextInt();
         try {
             clientService.delete(clientId);
-            System.out.println("Client has been deleted");
+            System.out.println("Client has been deleted With id " + clientId);
         } catch (ClientNotFoundException clientNotFoundException) {
             System.out.println(clientNotFoundException.getMessage());
         }
@@ -103,7 +109,7 @@ public class ClientMenu {
         int clientId = scanner.nextInt();
         try {
             Client fetchedClient = clientService.findById(clientId);
-            System.out.println("Id Client : " + fetchedClient.getId() + ", Name Client : " + fetchedClient.getName() + ", Phone Client : " + fetchedClient.getPhone());
+            System.out.println("Id Client : " + clientId + ", Name Client : " + fetchedClient.getName() + ", Phone Client : " + fetchedClient.getPhone());
         } catch (ClientNotFoundException clientNotFoundException) {
             System.out.println(clientNotFoundException.getMessage());
         }
@@ -111,7 +117,7 @@ public class ClientMenu {
 
     public void findClient() {
         clientService.findAll()
-                .forEach(client -> System.out.println("Client Id : " + client.getId() + ", Client Name : " + client.getName() + ", Client Phone : " + client.getPhone()));
+                .forEach(client -> System.out.println("Client Id : " + client.getKey() + ", Client Name : " + client.getValue().getName() + ", Client Phone : " + client.getValue().getPhone()));
     }
 
 
@@ -124,8 +130,8 @@ public class ClientMenu {
            String clientName = scanner.nextLine();
            System.out.println("Please enter client phone : ");
            String clientPhone = scanner.nextLine();
-           Client client = new Client(clientId, clientName, clientPhone);
-           clientService.update(client);
+           Client client = new Client(clientName, clientPhone);
+           clientService.update(clientId,client);
            System.out.println("Client has been updated");
        }catch(ClientNotFoundException clientNotFoundException){
            System.out.println(clientNotFoundException.getMessage());

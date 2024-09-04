@@ -2,13 +2,14 @@ package repository;
 
 
 import java.util.List;
+import java.util.Map;
 
-public interface HotelRepository<T>
+public interface HotelRepository<T,K>
 {
     T save(T t);
     T findById(int id);
-    List<T> findAll();
-    T update(T t);
+    List<Map.Entry<K,T>> findAll();
+    T update(int id , T t);
     void delete(int id);
     T findByName(String name);
     List<T> saveMultiple(List<T> t);

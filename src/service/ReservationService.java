@@ -10,11 +10,12 @@ import repository.HotelRepository;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-public class ReservationService implements HotelRepository<Reservation> {
+public class ReservationService implements HotelRepository<Reservation,Integer> {
 
     private final Map<Integer, Reservation> reservations;
-    private int currentId = 1;
+    private int reservationId = 1;
     private final HotelRoomService hotelRoomService;
     private final ClientService clientService;
 
@@ -30,10 +31,10 @@ public class ReservationService implements HotelRepository<Reservation> {
         if (reservation.getEndDate() == null || reservation.getStartDate() == null) {
             throw new IllegalArgumentException("The reservation must have a start date and end date");
         } else {
-            reservation.setId(currentId++);
-            reservations.put(reservation.getId(), reservation);
-            HotelRoom fetchedHotelRoom = hotelRoomService.findById(reservation.getRoomName().getId());
-            Client fetchedClient = clientService.findById(reservation.getClient().getId());
+            reservations.put(reservationId++, reservation);
+            reservation.setReservationId(reservationId);
+            HotelRoom fetchedHotelRoom = hotelRoomService.findById(reservation.getRoomName().getRoomId());
+            Client fetchedClient = clientService.findById(reservation.getClient().getClientId());
             fetchedClient.addReservation(reservation);
             fetchedHotelRoom.addReservation(reservation);
         }
@@ -53,16 +54,17 @@ public class ReservationService implements HotelRepository<Reservation> {
 
 
     @Override
-    public List<Reservation> findAll() {
+    public List<Map.Entry<Integer,Reservation>> findAll() {
         if (reservations.isEmpty()) {
             throw new ReservationNotFoundException("Reservation not found");
         }
-        return reservations.values().stream().toList();
+        Set<Map.Entry<Integer,Reservation>> entrySet = reservations.entrySet();
+        return entrySet.stream().toList();
     }
 
     @Override
-    public Reservation update(Reservation reservation) {
-        reservations.put(reservation.getId(), reservation);
+    public Reservation update(int id , Reservation reservation) {
+        reservations.put(id, reservation);
         return reservation;
     }
 
@@ -70,16 +72,18 @@ public class ReservationService implements HotelRepository<Reservation> {
     @Override
     public void delete(int id) {
         Reservation reservation = findById(id);
-        if (reservation != null && reservation.getId() == id) {
-            HotelRoom fetchedHotelRoom = hotelRoomService.findById(reservation.getRoomName().getId());
-            Client fetchedClient = clientService.findById(reservation.getClient().getId());
-            fetchedClient.deleteReservation(reservation);
-            fetchedHotelRoom.removeReservation(reservation);
+        if (reservation != null) {
+            HotelRoom fetchedHotelRoom = hotelRoomService.findById(reservation.getRoomName().getRoomId());
+            Client fetchedClient = clientService.findById(reservation.getClient().getClientId());
+            fetchedClient.deleteReservation(reservation.getReservationId());
+            fetchedHotelRoom.removeReservation(reservation.getReservationId());
+
             reservations.remove(id);
         } else {
             throw new ReservationNotFoundException("Reservation not found");
         }
     }
+
 
     @Override
     public Reservation findByName(String name) {

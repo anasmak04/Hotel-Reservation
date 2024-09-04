@@ -7,32 +7,31 @@ import java.time.LocalDate;
 
 public class Reservation {
 
-    private int id;
     private HotelRoom roomName;
     private Client client;
     private LocalDate startDate;
     private LocalDate endDate;
+    private int reservationId = 1;
 
     public Reservation(){}
 
-    public Reservation(int id, HotelRoom roomName, Client client, LocalDate startDate, LocalDate endDate) {
-        this.id = id;
+    public Reservation(HotelRoom roomName, Client client, LocalDate startDate, LocalDate endDate) {
         this.roomName = roomName;
         this.client = client;
         this.startDate = startDate;
         this.endDate = endDate;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public HotelRoom getRoomName() {
         return roomName;
+    }
+
+    public int getReservationId() {
+        return reservationId;
+    }
+
+    public void setReservationId(int reservationId) {
+        this.reservationId = reservationId;
     }
 
     public void setRoomName(HotelRoom roomName) {

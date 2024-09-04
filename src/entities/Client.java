@@ -1,30 +1,20 @@
 package entities;
 
+import java.util.*;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class Client {
-
-    private int id;
     private String name;
     private String phone;
-    private List<Reservation> reservations = new ArrayList<Reservation>();
+    private Map<Integer,Reservation> reservations;
+    private int clientId = 1;
 
     public Client() {}
 
-    public Client(int id, String name, String phone) {
-        this.id = id;
+    public Client(String name, String phone) {
         this.name = name;
         this.phone = phone;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+        this.reservations = new LinkedHashMap<>();
     }
 
     public String getName() {
@@ -43,20 +33,20 @@ public class Client {
         this.phone = phone;
     }
 
-    public List<Reservation> getReservations() {
-        return reservations;
+    public Set<Map.Entry<Integer,Reservation>> getReservations() {
+        return reservations.entrySet();
     }
 
-    public void setReservations(List<Reservation> reservations) {
-        this.reservations = reservations;
+    public int getClientId() {
+        return clientId;
     }
 
     public void addReservation(Reservation reservation) {
-        reservations.add(reservation);
+        reservations.put(clientId++,reservation);
     }
 
-    public void deleteReservation(Reservation reservation) {
-        reservations.remove(reservation);
+    public void deleteReservation(int id) {
+        reservations.remove(id);
     }
 
 }
