@@ -37,13 +37,11 @@ public class ReservationServiceTest {
 
         reservationService = new ReservationService(hotelRoomService,clientService);
         reservation = new Reservation(0, hotelRoom, client, LocalDate.now() , LocalDate.now());
-        reservationService.save(reservation);
     }
 
     @Test
     public void testSave(){
         Reservation savedReservation = reservationService.save(reservation);
-        System.out.println("Id here : " + savedReservation.getId());
         assertEquals(savedReservation.getId(), reservation.getId());
         assertEquals(savedReservation.getRoomName().getRoomName(), "room test");
     }

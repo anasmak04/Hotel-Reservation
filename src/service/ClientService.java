@@ -55,11 +55,30 @@ public class ClientService implements HotelRepository<Client> {
         clients.remove(id);
     }
 
+
     @Override
     public Client save(Client client) {
         client.setId(clientId++);
         clients.put(client.getId(), client);
         return client;
     }
+
+    @Override
+    public Client findByName(String name) {
+        for(Map.Entry<Integer,Client> entry : clients.entrySet()){
+            if(entry.getValue().getName().equals(name)){
+                return entry.getValue();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public List<Client> saveMultiple(List<Client> clientList) {
+        return clientList.stream().map(this::save).toList();
+    }
+
+
+
 
 }

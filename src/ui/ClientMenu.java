@@ -34,8 +34,9 @@ public class ClientMenu {
             System.out.println("3. Show Client By Id");
             System.out.println("4. Delete Client By Id");
             System.out.println("5. Update Client By Id");
-            System.out.println("6. Menu principal");
-            System.out.println("7. Exit");
+            System.out.println("6. Search By Client Name");
+            System.out.println("7. Menu principal");
+            System.out.println("8. Exit");
             System.out.println("===============================");
 
             int choice = scanner.nextInt();
@@ -57,9 +58,12 @@ public class ClientMenu {
                     updateClient();
                     break;
                 case 6:
-                    menuPrincipal(hotelRoomService, reservationService);
+                    searchByName();
                     break;
                 case 7:
+                    menuPrincipal(hotelRoomService, reservationService);
+                    break;
+                case 8:
                     return;
                 default:
                     System.out.println("Invalid choice");
@@ -127,5 +131,14 @@ public class ClientMenu {
            System.out.println(clientNotFoundException.getMessage());
        }
     }
+
+
+    public void searchByName() {
+        System.out.println("Enter a name of the client: ");
+        String nameClient = scanner.nextLine();
+        Client searchedClient = clientService.findByName(nameClient);
+        System.out.println("Result of Client " + searchedClient.getName() + " is " + searchedClient.getPhone());
+    }
+
 
 }

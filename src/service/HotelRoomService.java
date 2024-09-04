@@ -17,7 +17,7 @@ public class HotelRoomService implements HotelRepository<HotelRoom> {
 
     @Override
     public HotelRoom findById(int id) {
-        if(rooms.get(id) != null) {
+        if(rooms.containsKey(id)) {
             return rooms.get(id);
         }
         throw  new HotelRoomNotFoundException("Hotel Room Not Found");
@@ -51,6 +51,21 @@ public class HotelRoomService implements HotelRepository<HotelRoom> {
             throw  new HotelRoomNotFoundException("Hotel Room Not Found");
         }
         rooms.remove(id);
+    }
+
+    @Override
+    public HotelRoom findByName(String name) {
+        for(Map.Entry<Integer, HotelRoom> entry : rooms.entrySet()){
+            if(entry.getValue().getRoomName().equals(name)) {
+                return entry.getValue();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public List<HotelRoom> saveMultiple(List<HotelRoom> hotelRoomList) {
+        return hotelRoomList.stream().map(this::save).toList();
     }
 
 

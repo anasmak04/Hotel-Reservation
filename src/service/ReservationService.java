@@ -10,6 +10,7 @@ import repository.HotelRepository;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 public class ReservationService implements HotelRepository<Reservation> {
@@ -44,9 +45,11 @@ public class ReservationService implements HotelRepository<Reservation> {
 
     @Override
     public Reservation findById(int id) {
-        return reservations.values().stream()
-                .filter(reservation -> reservation.getId() == id)
-                .findFirst().orElseThrow(() -> new ReservationNotFoundException("Reservation not found"));
+        if(reservations.containsKey(id)) {
+            return reservations.get(id);
+        }
+
+        throw new ReservationNotFoundException("Reservation not found");
     }
 
 
@@ -77,6 +80,16 @@ public class ReservationService implements HotelRepository<Reservation> {
         } else {
             throw new ReservationNotFoundException("Reservation not found");
         }
+    }
+
+    @Override
+    public Reservation findByName(String name) {
+       return new Reservation();
+    }
+
+    @Override
+    public List<Reservation> saveMultiple(List<Reservation> t) {
+        return List.of();
     }
 
 

@@ -10,4 +10,6 @@ public interface HotelRepository<T>
     List<T> findAll();
     T update(T t);
     void delete(int id);
+    T findByName(String name);
+    List<T> saveMultiple(List<T> t);
 }
