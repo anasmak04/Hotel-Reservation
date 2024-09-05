@@ -122,7 +122,7 @@ public class ReservationMenu {
             return;
         }
 
-        if (!hotelRoomService.isRoomAvailable(roomId, startDate, endDate, 0)) {
+        if (!hotelRoomService.isRoomAvailable(roomId, startDate, endDate)) {
             System.out.println("The room is not available for the selected dates.");
             return;
         }
@@ -205,7 +205,7 @@ public class ReservationMenu {
         String endDateInput = scanner.nextLine();
         LocalDate endDate = DateFormat.parseDate(endDateInput);
 
-        if (!hotelRoomService.isRoomAvailable(roomId, startDate, endDate, 0)) {
+        if (!hotelRoomService.isRoomAvailable(roomId, startDate, endDate)) {
             System.out.println("The room is not available for the selected dates.");
             return;
         }
