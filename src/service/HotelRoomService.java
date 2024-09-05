@@ -81,12 +81,11 @@ public class HotelRoomService implements HotelRepository<HotelRoom,Integer> {
         return hotelRoom;
     }
 
-    public boolean isRoomAvailable(int roomId, LocalDate startDate, LocalDate endDate, int reservationId) {
+    public boolean isRoomAvailable(int roomId, LocalDate startDate, LocalDate endDate) {
         HotelRoom room = findById(roomId);
         return room.getReservations().stream()
-                .filter(reservation -> reservation.getKey() != reservationId)
-                .noneMatch(reservation ->
-                        !(endDate.isBefore(reservation.getValue().getStartDate())
+                .allMatch(reservation ->
+                        (endDate.isBefore(reservation.getValue().getStartDate())
                                 || startDate.isAfter(reservation.getValue().getEndDate()))
                 );
     }
